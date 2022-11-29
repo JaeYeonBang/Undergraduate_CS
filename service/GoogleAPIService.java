@@ -20,11 +20,10 @@ public class GoogleAPIService {
     public void downloadMap(String loacation , double [] center, ArrayList <Marker> markers){
         try{
 
-
 //            String imageURL = "https://maps.googleapis.com/maps/api/staticmap?center="+ center_str_x + "," + center_str_y + "&zoom=14&size=600x600" +
 //                    "&markers=icon:"+icon1+"%7C"+ center_str_x + "," + center_str_y +
 //                    "&key="+apikey;
-            String imageURL = makeUrl( center, 14 , 600 , 600 , markers) ;
+            String imageURL = makeUrl( center, 15 , 600 , 600 , markers) ;
 //            System.out.println(imageURL);
             URL url = new URL(imageURL);
             InputStream is = url.openStream();

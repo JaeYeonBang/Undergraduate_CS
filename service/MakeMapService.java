@@ -5,6 +5,7 @@ import project.domain.Marker;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class MakeMapService extends JFrame {
@@ -12,9 +13,9 @@ public class MakeMapService extends JFrame {
 
     static final String chemical_icon = "https://raw.githubusercontent.com/JaeYeonBang/DB/main/chemical.png";
 //    static final String war_icon = "https://upload.wikimedia.org/wikipedia/commons/f/fa/Map_marker_icon_%E2%80%93_Nicolas_Mollet_%E2%80%93_War_museum_%E2%80%93_Culture_%26_Entertainment_%E2%80%93_Default.png";
-    static final String war_icon = "https://raw.githubusercontent.com/JaeYeonBang/DB/main/war.png";
+    static final String civildefense_icon = "https://raw.githubusercontent.com/JaeYeonBang/DB/main/war.png";
     static final String AED_icon = "https://upload.wikimedia.org/wikipedia/commons/4/4d/Map_marker_icon_%E2%80%93_Nicolas_Mollet_%E2%80%93_Automated_External_Defibrillator_%E2%80%93_Health_%26_Education_%E2%80%93_Simple.png";
-    static final String earthquack_icon = "https://upload.wikimedia.org/wikipedia/commons/c/c0/Map_marker_icon_%E2%80%93_Nicolas_Mollet_%E2%80%93_Earthquake_%E2%80%93_Events_%E2%80%93_White.png";
+    static final String tsunami_icon = "https://upload.wikimedia.org/wikipedia/commons/c/c0/Map_marker_icon_%E2%80%93_Nicolas_Mollet_%E2%80%93_Earthquake_%E2%80%93_Events_%E2%80%93_White.png";
     private GoogleAPIService googleAPI = new GoogleAPIService();
 //    private String location = "ajou";
 
@@ -47,8 +48,13 @@ public class MakeMapService extends JFrame {
         return Markers;
     }
     public String type_To_iconURL(String type) {
+
         String icon_url = "";
-        if (type == "") icon_url = war_icon;
+        if (Objects.equals(type, "tsunami")) icon_url = tsunami_icon;
+        else if (Objects.equals(type, "chemical")) icon_url = chemical_icon;
+        else if (Objects.equals(type, "civildefense")) icon_url = civildefense_icon;
+        else if (Objects.equals(type,"aed")) icon_url = AED_icon;
+        System.out.println(type);
         return icon_url;
     }
 }

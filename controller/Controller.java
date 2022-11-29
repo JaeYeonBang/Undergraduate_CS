@@ -1,6 +1,8 @@
 package project.controller;
 
+import project.repository.SQLSelect;
 import project.repository.SQLconnect;
+import project.repository.SQLprocess;
 import project.service.MakeMapService;
 import project.domain.Location;
 
@@ -12,17 +14,21 @@ import java.util.Scanner;
 public class Controller {
     public static void main(String[] args) throws SQLException {
 
-        SQLconnect sqLconnect = new SQLconnect();
+        SQLconnect sqlconnect = new SQLconnect();
+        SQLprocess sqlprocess = new SQLprocess();
+        SQLSelect sqlSelect = new SQLSelect();
+        sqlprocess.SQLMakeView(sqlconnect.getSt());
 
         Scanner scn = new Scanner(System.in);
         String input = "";
         String buffer = "";
+        ResultSet rs = null;
 
         Location center = new Location("Ajou University" , "center" , 37.2838, 127.0437);
 
-        ArrayList<Location> marker_locations = new ArrayList<Location>();
-        marker_locations.add(new Location("A" , "",37.2838  ,127.0437));
-        marker_locations.add(new Location("B" , "",37.2858  ,127.0457));
+//        ArrayList<Location> marker_locations = new ArrayList<Location>();
+//        marker_locations.add(new Location("A" , "",37.2838  ,127.0437));
+//        marker_locations.add(new Location("B" , "",37.2858  ,127.0457));
 
         while(true) {
 
@@ -33,7 +39,11 @@ public class Controller {
 //            System.out.println("==============메뉴===================");
 //            System.out.println("1. 내 주변에 있는 대피장소 보기");
             if (Objects.equals(input, "1")){
-                MakeMapService makeMap = new MakeMapService(center,marker_locations);
+                System.out.println("in 1");
+                rs = sqlSelect.tsunami_select(sqlconnect.getSt(), center);
+                System.out.println("after rs");
+                MakeMapService makeMap = new MakeMapService(center,sqlprocess.Rs_to_Location(rs));
+
             }
 
 //            System.out.println("2. 내 주변 항목 별 대피장소 보기");
@@ -50,7 +60,7 @@ public class Controller {
 //            System.out.println("====================================");
 
 
-            MakeMapService makeMap = new MakeMapService(center,marker_locations);
+//            MakeMapService makeMap = new MakeMapService(center,marker_locations);
             /// 1) 주변에 있는 대피장소 다 보여주기 (항목별로도 보여주고)
             /// 특정 상황 발생시, 그 상황에 맞는 가장가까운 대피장소 + 주변에 있는 거 보여주기
             /// 장소 선택 시, 상세정보 보여주기, 장소에 대한 평가 남기기 -> 1) 특정 고르고, 댓글이나 상세정보 확인하기. + 댓글쓰기
@@ -67,6 +77,12 @@ public class Controller {
         System.out.println("2. 내 주변 항목 별 대피장소 보기");
         System.out.println("3. 특정 위치 근처 대피장소 보기");
         System.out.println("4. 종료");
+        System.out.println("====================================");
+    }
+
+    public static void print_Locations(ArrayList<Location> locations) {
+        System.out.println("====================================");
+
         System.out.println("====================================");
     }
 }
