@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
 
+import static project.controller.printing.*;
+import static project.domain.Location.getDistance_of_Array;
+
 public class Controller {
     public static void main(String[] args) throws SQLException {
 
@@ -26,65 +29,94 @@ public class Controller {
 
         Location center = new Location("Ajou University" , "center" , 37.2838, 127.0437);
 
-//        ArrayList<Location> marker_locations = new ArrayList<Location>();
-//        marker_locations.add(new Location("A" , "",37.2838  ,127.0437));
-//        marker_locations.add(new Location("B" , "",37.2858  ,127.0457));
 
         while(true) {
-
+            ArrayList<Location> Location_result = new ArrayList<Location>();
             print_Menu();
             input = scn.next();
             System.out.print(input);
-//            System.out.println("====================================");
-//            System.out.println("==============메뉴===================");
-//            System.out.println("1. 내 주변에 있는 대피장소 보기");
-            if (Objects.equals(input, "1")){
-                System.out.println("in 1");
-                rs = sqlSelect.tsunami_select(sqlconnect.getSt(), center);
-                System.out.println("after rs");
-                MakeMapService makeMap = new MakeMapService(center,sqlprocess.Rs_to_Location(rs));
 
+            if (Objects.equals(input, "1")){
+
+                System.out.println(center.getName());
+                rs = sqlSelect.All_select(sqlconnect.getSt(), center);
+                Location_result.addAll(sqlprocess.Rs_to_Location(rs));
+
+                getDistance_of_Array(Location_result,center);
+
+                print_Locations(Location_result);
+
+                MakeMapService makeMap = new MakeMapService(center,Location_result);
+
+                Specific specific = new Specific(sqlconnect.getSt(), center,rs,Location_result);
+                System.out.println("\nend of 1 : ");
             }
 
 //            System.out.println("2. 내 주변 항목 별 대피장소 보기");
-            if (Objects.equals(input, "2")){
 
+            //("1. AED\t 2. 지진해일대피소\t 3. 민방위대피시설\t 4. 화학사고대피장소 \t 5. 나가기");
+            else if (Objects.equals(input, "2")){
+
+                print_types();
+                input = scn.next();
+
+                if (Objects.equals(input, "5")) continue;
+
+                else if (Objects.equals(input, "1")){
+                    rs = sqlSelect.aed_select(sqlconnect.getSt(), center);//
+                    Location_result.addAll(sqlprocess.Rs_to_Location(rs));
+                }
+
+                else if (Objects.equals(input, "2")){
+                    rs = sqlSelect.tsunami_select(sqlconnect.getSt(), center);//
+                    Location_result.addAll(sqlprocess.Rs_to_Location(rs));
+                }
+
+                else if (Objects.equals(input, "3")){
+                    rs = sqlSelect.civilDefense_select(sqlconnect.getSt(), center);//
+                    Location_result.addAll(sqlprocess.Rs_to_Location(rs));
+                }
+
+                else if (Objects.equals(input, "4")){
+                    rs = sqlSelect.chemical_select(sqlconnect.getSt(), center);//
+                    Location_result.addAll(sqlprocess.Rs_to_Location(rs));
+                }
+                else continue;
+                getDistance_of_Array(Location_result,center);
+                print_Locations(Location_result);
+                MakeMapService makeMap = new MakeMapService(center,Location_result);
+
+                Specific specific = new Specific(sqlconnect.getSt(), center,rs,Location_result);
+                System.out.println("\nend of 2 : ");
             }
 //            System.out.println("3. 특정 위치 근처 대피장소 보기");
+            else if (Objects.equals(input, "3")){
+                double x;
+                double y;
+                String name;
+                System.out.print("\n현재 위치의 위도를 입력하세요 : ");
+                x = Double.valueOf(scn.next());
+                System.out.print("\n현재 위치의 경도를 입력하세요 : ");
+                y = Double.valueOf(scn.next());
+                System.out.print("\n위치의 이름을 입력하세요 : ");
+                name = scn.next();
+                center = new Location(name , "center" , x, y);
 
-            if (Objects.equals(input, "3")){
+                System.out.println("\nend of 2 : ");
 
             }
 //            System.out.println("4. 종료");
-            if (Objects.equals(input, "4")) break;
-//            System.out.println("====================================");
+            else if (Objects.equals(input, "4")) {
+                System.out.println("\nend of 4 : ");
+                return;
+                }
 
-
-//            MakeMapService makeMap = new MakeMapService(center,marker_locations);
-            /// 1) 주변에 있는 대피장소 다 보여주기 (항목별로도 보여주고)
-            /// 특정 상황 발생시, 그 상황에 맞는 가장가까운 대피장소 + 주변에 있는 거 보여주기
-            /// 장소 선택 시, 상세정보 보여주기, 장소에 대한 평가 남기기 -> 1) 특정 고르고, 댓글이나 상세정보 확인하기. + 댓글쓰기
-            /// 댓글 domain
-            /// 거리계산 -> sql 단계에서 처리하기 orderby하고
-            /// 다른위치에 대한 것
         }
+
+
     }
 
-    public static void print_Menu(){
-        System.out.println("====================================");
-        System.out.println("==============메뉴===================");
-        System.out.println("1. 내 주변에 있는 대피장소 보기");
-        System.out.println("2. 내 주변 항목 별 대피장소 보기");
-        System.out.println("3. 특정 위치 근처 대피장소 보기");
-        System.out.println("4. 종료");
-        System.out.println("====================================");
-    }
 
-    public static void print_Locations(ArrayList<Location> locations) {
-        System.out.println("====================================");
-
-        System.out.println("====================================");
-    }
 }
 
 

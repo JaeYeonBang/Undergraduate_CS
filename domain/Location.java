@@ -1,5 +1,7 @@
 package project.domain;
 
+import java.util.ArrayList;
+
 public class Location{
 
     private String name = null;
@@ -10,6 +12,16 @@ public class Location{
     private int max_psn = 0;
     private double x;
     private double y;
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
+
+    private double distance;
     public Location(String name,String type, double x , double y) {
         this.name = name;
         this.type = type;
@@ -55,6 +67,29 @@ public class Location{
         this.max_psn = max_psn;
         this.x = x;
         this.y = y;
+    }
+
+    public static double getDistance(Location A ,Location B) {
+        double lat1 = A.x;
+        double lon1 = A.y;
+        double lat2 = B.x;
+        double lon2 = B.y;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+
+        double a = Math.sin(dLat/2)* Math.sin(dLat/2)+ Math.cos(Math.toRadians(lat1))* Math.cos(Math.toRadians(lat2))* Math.sin(dLon/2)* Math.sin(dLon/2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        double d =6371* c * 1000;    // Distance in m
+
+        return d;
+    }
+
+    public static ArrayList<Location> getDistance_of_Array(ArrayList<Location> A , Location center){
+
+        for(Location a : A){
+            a.setDistance(getDistance(a,center));
+        }
+        return A;
     }
 
 

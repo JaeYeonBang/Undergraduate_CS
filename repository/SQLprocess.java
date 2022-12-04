@@ -3,6 +3,7 @@ package project.repository;
 import project.domain.Location;
 import project.domain.Marker;
 
+import project.domain.Comment;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -14,7 +15,8 @@ public class SQLprocess {
     public SQLprocess(){}
 
     public int SQLMakeView(Statement st) throws SQLException {
-        String make_view = "create view aed_view as\n" +
+        String make_view = "Drop view IF EXISTS aed_view CASCADE;\n" +
+                "create view aed_view as\n" +
                 "select INSTL_PLC as NAME , TELNO , REFINE_ROADNM_ADDR , REFINE_LOTNO_ADDR , REFINE_WGS84_LAT , \n" +
                 "REFINE_WGS84_LOGT , null as MAX_ACEPTNC_PSN_CNT , 'aed' as dis_type\n" +
                 "from aed;\n" +
@@ -52,6 +54,7 @@ public class SQLprocess {
             int max_psn = 0;
             double x = 0;
             double y = 0;
+            double distance = 0;
 
             String temp = "";
             name = rs.getString("NAME");
@@ -63,16 +66,44 @@ public class SQLprocess {
 
             temp = rs.getString("MAX_ACEPTNC_PSN_CNT");
 //            System.out.println(temp);
-            if (!Objects.equals(temp , "null"))  max_psn = Integer.valueOf(temp);
+//            System.out.println((temp , "null"));
+            if (temp != null && !temp.equals( "null"))  max_psn = Integer.valueOf(temp);
             temp = rs.getString("REFINE_WGS84_LAT");
-            if (!Objects.equals(temp , "null"))  x = Double.valueOf(temp);
+            if (temp != null && !temp.equals( "null"))   x = Double.valueOf(temp);
             temp =rs.getString("REFINE_WGS84_LOGT");
-            if (!Objects.equals(temp , "null"))  y = Double.valueOf(temp);
-
+            if (temp != null && !temp.equals( "null"))   y = Double.valueOf(temp);
 
             marker_locations.add(new Location(name ,type,roadnm_addr, lotno_addr,phone_number,max_psn,x,y));
         }
         return marker_locations;
+    }
+
+    public ArrayList<Comment> Rs_to_Comment(ResultSet rs) throws SQLException {
+
+
+        ArrayList<Comment> comments  = new ArrayList<Comment>();
+
+        while(rs.next()){
+            String ID = null;
+            String contents= null;
+            String Time= null;
+            double x = 0;
+            double y = 0;
+
+            String temp = "";
+            ID = rs.getString("ID");
+            contents = rs.getString("content");
+            Time = rs.getString("Time");
+
+            temp = rs.getString("REFINE_WGS84_LAT");
+            if (temp != null && !temp.equals( "null"))   x = Double.valueOf(temp);
+            temp =rs.getString("REFINE_WGS84_LOGT");
+            if (temp != null && !temp.equals( "null"))   y = Double.valueOf(temp);
+
+            comments.add(new Comment(ID, contents, Time, x, y) {
+            });
+        }
+        return comments;
     }
 }
 
