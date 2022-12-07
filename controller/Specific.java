@@ -25,7 +25,7 @@ public class Specific {
 
         while(true) {
             print_specific();
-            input = scn.next();
+            input = scn.nextLine();
         if(input.equals("0")) break;
         else if (Integer.valueOf(input) > Locations_Result.size() ) break;
         else if (Integer.valueOf(input) <= Locations_Result.size()) {
@@ -52,8 +52,8 @@ public class Specific {
             print_comments(comments);
             comments = null;
         while(true) {
-            System.out.println(("0. 나가기\t 1. 댓글읽기\t2. 댓클추가"));
-            input = scn.next();
+            System.out.println(("0. 나가기\t 1. 댓글읽기\t2. 댓글추가"));
+            input = scn.nextLine();
 
             if(input.equals("0")) return;
             else if (input.equals("1")) {
@@ -68,9 +68,9 @@ public class Specific {
                 double y = location.getY();
 
                 System.out.println(("아이디를 입력해 주세요."));
-                ID = scn.next();
+                ID = scn.nextLine();
                 System.out.println(("내용을 입력해 주세요."));
-                contents = scn.next();
+                contents = scn.nextLine();
 
                 Comment new_comment = new Comment(ID,contents,x,y);
 

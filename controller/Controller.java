@@ -11,10 +11,13 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
 
+import static project.controller.Specific.sqlSelect;
 import static project.controller.printing.*;
 import static project.domain.Location.getDistance_of_Array;
 
 public class Controller {
+
+
     public static void main(String[] args) throws SQLException {
 
         SQLconnect sqlconnect = new SQLconnect();
@@ -29,11 +32,23 @@ public class Controller {
 
         Location center = new Location("Ajou University" , "center" , 37.2838, 127.0437);
 
+        Callback callback = (text, rs1, locations, center1) -> {
+
+            //System.out.println("메시지를 검토하고 있습니다.");
+            print_showmap(text,rs1,locations, center1, sqlconnect,  sqlprocess);
+            //System.out.println("메시지 검토 종료");
+
+        };
+
+        Thread b1 = new Thread(new Alarm(callback,rs, new ArrayList<Location>() , center));
+        b1.start();
 
         while(true) {
+
+
             ArrayList<Location> Location_result = new ArrayList<Location>();
             print_Menu();
-            input = scn.next();
+            input = scn.nextLine();
             System.out.print(input);
 
             if (Objects.equals(input, "1")){
@@ -58,7 +73,7 @@ public class Controller {
             else if (Objects.equals(input, "2")){
 
                 print_types();
-                input = scn.next();
+                input = scn.nextLine();
 
                 if (Objects.equals(input, "5")) continue;
 
@@ -99,7 +114,7 @@ public class Controller {
                 System.out.print("\n현재 위치의 경도를 입력하세요 : ");
                 y = Double.valueOf(scn.next());
                 System.out.print("\n위치의 이름을 입력하세요 : ");
-                name = scn.next();
+                name = scn.nextLine();
                 center = new Location(name , "center" , x, y);
 
                 System.out.println("\nend of 2 : ");
@@ -110,13 +125,35 @@ public class Controller {
                 System.out.println("\nend of 4 : ");
                 return;
                 }
+            else continue;
 
         }
 
 
+        /// 재난문자 전송 시, 이를 해석해서, 관련된 근처 대피소 알림이 오게끔 하는 기능
+
+    }
+
+    private static void print_showmap(String text, ResultSet rs1, ArrayList<Location> locations, Location center1, SQLconnect sqlconnect, SQLprocess sqlprocess) throws SQLException {
+
+        System.out.println("-----------------------");
+        System.out.println("--------"+text+"-------");
+        System.out.println("-----------------------");
+        if(text.equals("지진경보")) {rs1 = sqlSelect.tsunami_select(sqlconnect.getSt(), center1);}
+        else if (text.equals("화학사고경보")) {
+            rs1 = sqlSelect.chemical_select(sqlconnect.getSt(), center1);
+        }
+        else if (text.equals("민방위경보")) {
+            rs1 = sqlSelect.civilDefense_select(sqlconnect.getSt(), center1);
+        }
+        locations.addAll(sqlprocess.Rs_to_Location(rs1));
+        getDistance_of_Array(locations,center1);
+        print_Locations(locations);
+        MakeMapService makeMap = new MakeMapService(center1,locations);
     }
 
 
 }
+
 
 
